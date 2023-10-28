@@ -4,10 +4,13 @@ const app = express();
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
-// middleware
-app.use(morgan('dev'));
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev')); //log every request in console
+}
 
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
   console.log('test from middelware');
@@ -18,8 +21,6 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
-
-// route handlers
 
 // 3) Routes
 
