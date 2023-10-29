@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
+
+const mongoose = require('mongoose');
 
 const app = require('./app');
 
@@ -12,13 +12,13 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
   .connect(DB, {
-    // .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
+    useUnifiedTopology: true,
   })
   .then((con) => {
-    console.log(`Database connected ${con.connection.host}`);
+    console.log(`Database connected`);
   });
 
 const port = process.env.PORT || 3000;

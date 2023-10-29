@@ -4,7 +4,7 @@
   "description": "learning nodejs",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "hamed",
@@ -14,5 +14,8 @@
     "express": "^4.18.2",
     "mongoose": "^5.13.21",
     "morgan": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }
