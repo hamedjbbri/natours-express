@@ -19,7 +19,7 @@ const tourSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Difficulty level is required'],
   },
-  ratingAverage: {
+  ratingsAverage: {
     type: Number,
     default: 4.5,
   },
