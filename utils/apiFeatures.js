@@ -32,7 +32,7 @@ class APIFeatures {
       const fields = this.queryString.fields.split(',').join(' ');
       this.query = this.query.select(fields);
     } else {
-      this.query = this.query.select('name duration price difficulty');
+      this.query = this.query.select('-__v');
     }
 
     return this;
