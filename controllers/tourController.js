@@ -55,7 +55,7 @@ exports.addTour = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'failure',
-      message: 'Invalid data send',
+      message: err,
     });
   }
 };
@@ -116,9 +116,9 @@ exports.getTourStats = async (req, res) => {
       {
         $sort: { avgPrice: 1 },
       },
-      {
-        $match: { _id: { $ne: 'EASY' } },
-      },
+      // {
+      //   $match: { _id: { $ne: 'EASY' } },
+      // },
     ]);
 
     console.log('Aggregation result:', stats);
