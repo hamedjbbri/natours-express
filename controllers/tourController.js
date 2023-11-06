@@ -1,5 +1,6 @@
 const Tour = require('./../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
+const catchAsync = require('../utils/catchAsync');
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -42,44 +43,30 @@ exports.getTour = async (req, res) => {
   });
 };
 
-exports.addTour = async (req, res) => {
-  try {
-    const newTour = await Tour.create(req.body);
+exports.addTour = catchAsync(async (req, res, next) => {
+  const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        tour: newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'failure',
-      message: err,
-    });
-  }
-};
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tour: newTour,
+    },
+  });
+});
 
-exports.updateTour = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour: updatedTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'failure',
-      message: err,
-    });
-  }
-};
+exports.updateTour = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour: updatedTour,
+    },
+  });
+});
 
 exports.deleteTour = async (req, res) => {
   try {
