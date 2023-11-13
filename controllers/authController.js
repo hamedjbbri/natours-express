@@ -69,7 +69,7 @@ exports.protect = async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-  console.log(token);
+  // console.log(token);
 
   if (!token) {
     return res.status(401).json({
@@ -112,3 +112,22 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+exports.forgotPassword = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  console.log(req.body);
+  console.log(user);
+
+  if (!user) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email does not exist',
+    });
+  }
+
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBefore: false });
+};
+
+exports.resetPassword = async (req, res, next) => {};
