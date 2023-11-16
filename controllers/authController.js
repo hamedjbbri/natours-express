@@ -12,6 +12,18 @@ const signToken = (id) => {
   });
 };
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user: newUser,
+    },
+  });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -21,16 +33,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role,
   });
-
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, next);
 });
 
 exports.login = async (req, res, next) => {
@@ -190,4 +193,19 @@ exports.resetPassword = async (req, res, next) => {
     status: 'success',
     token,
   });
+};
+
+exports.updatePassword = async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+  // Check Password
+  if (!user.correctPassword(req.body.passwordCurrent, user.password)) {
+    return res.status(401).json({
+      status: 'error',
+      message: 'Passwords do not match.',
+    });
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
 };
