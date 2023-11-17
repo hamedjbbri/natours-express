@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const {
+  protect,
   signup,
   login,
   forgotPassword,
@@ -10,6 +11,7 @@ const {
 } = require('../controllers/authController');
 
 const {
+  updateMe,
   getAllUsers,
   getUser,
   updateUser,
@@ -17,6 +19,7 @@ const {
   createUser,
 } = require('../controllers/userController');
 
+router.patch('/updateMe', protect, updateMe);
 router.post('/signup', signup);
 router.post('/login', login);
 

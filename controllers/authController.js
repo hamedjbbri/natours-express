@@ -3,7 +3,6 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 
 const signToken = (id) => {
@@ -13,15 +12,14 @@ const signToken = (id) => {
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  // const token = signToken(user._id);
+  // res.status(statusCode).json({
+  //   status: 'success',
+  //   token,
+  //   data: {
+  //     user: newUser,
+  //   },
+  // });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
@@ -33,7 +31,15 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role,
   });
-  createSendToken(newUser, 201, next);
+  const token = signToken(newUser._id);
+
+  res.status(201).json({
+    status: 'success',
+    token,
+    data: {
+      user: newUser,
+    },
+  });
 });
 
 exports.login = async (req, res, next) => {
