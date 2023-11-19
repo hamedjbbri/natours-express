@@ -11,6 +11,7 @@ const {
 } = require('../controllers/authController');
 
 const {
+  deleteMe,
   updateMe,
   getAllUsers,
   getUser,
@@ -20,6 +21,8 @@ const {
 } = require('../controllers/userController');
 
 router.patch('/updateMe', protect, updateMe);
+router.delete('/deleteMe', protect, deleteMe);
+
 router.post('/signup', signup);
 router.post('/login', login);
 

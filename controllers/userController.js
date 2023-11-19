@@ -40,6 +40,15 @@ exports.updateMe = async (req, res, next) => {
   });
 };
 
+exports.deleteMe = async (req, res) => {
+  // delete the current logged in user
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+  res.status(200).json({
+    success: true,
+    data: null,
+  });
+};
+
 exports.getUser = (req, res) => {
   res.status(500).json({
     status: 'error',
