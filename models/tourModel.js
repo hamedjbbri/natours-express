@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -10,7 +11,7 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       maxlength: [40, 'A tour name must have a less or eq 40 characters'],
-      minlength: [10, 'A tour name must have a more or eq 10 characters'],
+      minlength: [5, 'A tour name must have a more or eq 10 characters'],
       // validate: [validator.isAlpha, 'Tour name must only contain charcters'],
     },
     slug: String,
@@ -56,15 +57,15 @@ const tourSchema = new mongoose.Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, 'Summary field cannot be empty'],
+      required: [false, 'Summary field cannot be empty'],
     },
     description: {
       type: String,
-      required: [true, 'Description field cannot be empty'],
+      required: [false, 'Description field cannot be empty'],
     },
     imageCover: {
       type: String,
-      required: [true, 'Image cover is required'],
+      required: [false, 'Image cover is required'],
     },
     images: [String],
     createdAt: {
@@ -103,6 +104,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {
     toJSON: { virtuals: true },
@@ -119,6 +121,12 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 
 // tourSchema.post('save', function (doc, next) {
 //   console.log(doc);
@@ -142,6 +150,14 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds`);
 
+  next();
+});
+
+tourSchema.post(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 
