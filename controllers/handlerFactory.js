@@ -1,3 +1,5 @@
+const APIFeatures = require('../utils/apiFeatures');
+
 exports.deleteOne = (Model) => async (req, res) => {
   try {
     const id = req.params.id;
@@ -39,7 +41,8 @@ exports.createOne = (Model) => async (req, res) => {
 };
 
 exports.getOne = (Model, populateOption) => async (req, res) => {
-  let query = Model.findById(req.paramas.id);
+  let query = Model.findById(req.params.id);
+
   if (populateOption) {
     query = query.populate(populateOption);
   }
@@ -53,4 +56,33 @@ exports.getOne = (Model, populateOption) => async (req, res) => {
       data: doc,
     },
   });
+};
+
+exports.getAll = (Model) => async (req, res) => {
+  try {
+    let filter = {};
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    const features = new APIFeatures(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const doc = await features.query;
+
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success',
+      results: doc.length,
+      data: {
+        data: doc,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'failure',
+      message: err,
+    });
+  }
 };
