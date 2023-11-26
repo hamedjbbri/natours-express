@@ -1,6 +1,8 @@
 const express = require('express');
 const { protect, restrictTo } = require('./../controllers/authController');
-const router = express.Router();
+const router = express.Router({
+  mergeParams: true, // allows us to access req.params from parent routes
+});
 
 const {
   getAllReviews,

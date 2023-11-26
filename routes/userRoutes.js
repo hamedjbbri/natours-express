@@ -1,6 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
+
 const {
   protect,
   signup,
@@ -8,6 +9,7 @@ const {
   forgotPassword,
   resetPassword,
   updatePassword,
+  restrictTo,
 } = require('../controllers/authController');
 
 const {
