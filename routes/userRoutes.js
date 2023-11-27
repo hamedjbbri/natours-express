@@ -13,6 +13,7 @@ const {
 } = require('../controllers/authController');
 
 const {
+  getMe,
   deleteMe,
   updateMe,
   getAllUsers,
@@ -22,16 +23,19 @@ const {
   createUser,
 } = require('../controllers/userController');
 
-router.patch('/updateMe', protect, updateMe);
-router.delete('/deleteMe', protect, deleteMe);
-
 router.post('/signup', signup);
 router.post('/login', login);
-
-router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
+router.post('/forgotPassword', forgotPassword);
 
-router.patch('/updateMyPassword', protect, updatePassword);
+router.use(protect);
+
+router.get('/me', getMe, getUser);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+router.patch('/updateMyPassword', updatePassword);
+
+router.use(restrictTo('admin'));
 
 router.route('/').get(getAllUsers).post(createUser);
 

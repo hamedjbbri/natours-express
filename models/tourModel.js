@@ -36,6 +36,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'rating must be above 1.0'],
       max: [5, 'rating must be below 5.0'],
+      set: (val) => val.toFixed(1),
     },
     ratingsQuantity: {
       type: Number,
@@ -117,6 +118,9 @@ tourSchema.virtual('reviews', {
   localField: '_id',
   foreignField: 'tour',
 });
+
+tourSchema.index({ price: 1, ratingAverage: -1 });
+tourSchema.index({ slug: 1 });
 
 // virtual populate
 tourSchema.virtual('durationWeeks').get(function () {
