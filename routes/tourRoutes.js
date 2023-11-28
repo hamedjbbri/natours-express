@@ -8,6 +8,8 @@ const reviewRouter = require('./../routes/reviewRoutes');
 // } = require('./../controllers/reviewController');
 
 const {
+  getDistances,
+  getToursWithin,
   getMonthlyPlan,
   getAllTours,
   getTourStats,
@@ -29,6 +31,12 @@ router
 router.route('/tour-stats').get(getTourStats);
 
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
+
+router
+  .route('/tours-within/:distances/center/:latlng/unit/:unit')
+  .get(getToursWithin);
+
+router.route('/distances/:latlng/unit/:unit').get(getDistances);
 
 router
   .route('/')
