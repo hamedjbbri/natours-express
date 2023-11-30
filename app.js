@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
@@ -14,6 +15,10 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
 const rateLimit = require('express-rate-limit');
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 1) GLOBAL MIDDLEWARES
 app.use(helmet());
@@ -57,9 +62,6 @@ app.use(
   })
 );
 
-// Test middleware
-app.use(express.static(`${__dirname}/public`));
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
@@ -69,6 +71,13 @@ app.use((req, res, next) => {
 });
 
 // 3) Routes
+
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'Th forest Hiker',
+    user: 'Hamed',
+  });
+});
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
