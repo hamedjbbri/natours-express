@@ -1,16 +1,27 @@
 doctype html 
 html 
   head 
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title Natours | #{tour}
     link(rel='stylesheet' href='css/style.css') 
     link(rel='shortcut icon' type='image/png' href='img/favicon.png') 
-  
-  body  
-    h1= tour
-    h2= user.toUpperCase()
-    //- h1  The Park Camper
+    link(rel='stylesheet'  href='https://fonts.googleapis.com/css?family=Lato:300,300i,700') 
  
-    - const x = 9;
-    h2= 2 * x
+  <head>
 
-    p  This is some text
+  body   
+    // Header
+    include _header
+         
+    main.overview
+      h1= tour
+
+
+    // footer
+    include _footer
+
+
+
+  
+    
