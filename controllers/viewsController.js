@@ -10,8 +10,15 @@ exports.getOverview = async (req, res, next) => {
   });
 };
 
-exports.getTour = (req, res) => {
+exports.getTour = async (req, res) => {
+  //1) get the data, for the requested tour
+  const tour = await Tour.findOne({ slug: req.params.slug }).populate({
+    path: 'reviews',
+    fields: 'review rating',
+  });
+
   res.status(200).render('tour', {
-    title: ' tour',
+    title: tour.name,
+    tour,
   });
 };
