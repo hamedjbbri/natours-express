@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
+const cookieParser = require('cookie-parser');
 const globalErrorHandler = require('./controllers/errorController');
 
 const AppError = require('./utils/appError');
@@ -45,6 +45,8 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+
 // Data sanitization againest noSQL query injection
 app.use(mongoSanitize());
 
@@ -66,18 +68,15 @@ app.use(
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
-  //console.log(req.headers);
-
   next();
 });
 
 // 3) Routes
 
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
-
-app.use('/', viewRouter);
 
 app.all('*', (req, res, next) => {
   // const err = new Error(`Can't find ${req.originalUrl} on this server!`);
@@ -87,7 +86,7 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 // 4) Start Server
 module.exports = app;
