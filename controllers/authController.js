@@ -118,6 +118,35 @@ exports.protect = async (req, res, next) => {
   next();
 };
 
+// ====================
+
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'no fresh user exist',
+      });
+    }
+
+    // 4) Check if user change password after the token was issue
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+      return res.sendStatus(401);
+    }
+    res.locals.user = freshUser;
+  }
+
+  next();
+};
+
+// ============================
+
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
