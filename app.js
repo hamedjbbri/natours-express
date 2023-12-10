@@ -45,6 +45,7 @@ app.use(
   })
 );
 
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization againest noSQL query injection
