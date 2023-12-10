@@ -6,6 +6,7 @@ const {
   protect,
   signup,
   login,
+  logout,
   forgotPassword,
   resetPassword,
   updatePassword,
@@ -25,6 +26,7 @@ const {
 
 router.post('/signup', signup);
 router.post('/login', login);
+router.get('/logout', logout);
 router.patch('/resetPassword/:token', resetPassword);
 router.post('/forgotPassword', forgotPassword);
 

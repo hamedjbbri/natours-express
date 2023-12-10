@@ -1,4 +1,4 @@
-const sendErrorDev = (err, res) => {
+const sendErrorDev = (err, req, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -7,7 +7,7 @@ const sendErrorDev = (err, res) => {
   });
 };
 
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err, req, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
@@ -19,9 +19,9 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd(err, res);
+    sendErrorProd(err, req, res);
   }
 
   res.status(err.statusCode).json({

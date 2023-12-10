@@ -1,4 +1,5 @@
 const Tour = require('../models/tourModel');
+const AppError = require('../utils/appError');
 
 exports.getOverview = async (req, res, next) => {
   //1) get data from collection
@@ -17,6 +18,10 @@ exports.getTour = async (req, res, next) => {
     fields: 'review rating',
   });
 
+  if (!tour) {
+    return next(new AppError('There is no tour with that name', 404));
+  }
+
   res.status(200).render('tour', {
     title: tour.name,
     tour,
@@ -26,5 +31,11 @@ exports.getTour = async (req, res, next) => {
 exports.login = (req, res) => {
   res.status(200).render('login', {
     title: 'Login',
+  });
+};
+
+exports.getAccount = (req, res) => {
+  res.status(200).render('account', {
+    title: 'Your Account',
   });
 };

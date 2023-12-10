@@ -76,6 +76,14 @@ exports.login = async (req, res, next) => {
   sendTokenCookie(user, res);
 };
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = async (req, res, next) => {
   // 1) getting token and check if its there
   let token;
@@ -114,6 +122,7 @@ exports.protect = async (req, res, next) => {
 
   // grant access to protected route
   req.user = freshUser;
+  res.locals.user = freshUser;
 
   next();
 };
@@ -122,26 +131,30 @@ exports.protect = async (req, res, next) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET
-    );
+    try {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
 
-    const freshUser = await User.findById(decoded.id);
-    if (!freshUser) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'no fresh user exist',
-      });
-    }
+      const freshUser = await User.findById(decoded.id);
+      if (!freshUser) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'no fresh user exist',
+        });
+      }
 
-    // 4) Check if user change password after the token was issue
-    if (freshUser.changedPasswordAfter(decoded.iat)) {
-      return res.sendStatus(401);
+      // 4) Check if user change password after the token was issue
+      if (freshUser.changedPasswordAfter(decoded.iat)) {
+        return res.sendStatus(401);
+      }
+      res.locals.user = freshUser;
+      return next();
+    } catch (error) {
+      return next();
     }
-    res.locals.user = freshUser;
   }
-
   next();
 };
 
