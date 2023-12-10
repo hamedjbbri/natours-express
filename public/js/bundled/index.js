@@ -577,9 +577,12 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 var _login = require("./login");
 // import '@babel/polyfill';
 var _mapbox = require("./mapbox");
+var _updateSettings = require("./updateSettings");
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
 const logOutBtn = document.querySelector(".nav__el--logout");
+const userDataForm = document.querySelector(".form-user-data");
+const userPasswordForm = document.querySelector(".form-user-password");
 if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     (0, _mapbox.displayMap)(locations);
@@ -591,8 +594,33 @@ if (loginForm) loginForm.addEventListener("submit", (e)=>{
     (0, _login.login)(email, password);
 });
 if (logOutBtn) logOutBtn.addEventListener("click", (0, _login.logout));
+if (userDataForm) userDataForm.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    (0, _updateSettings.updateSettings)({
+        name,
+        email
+    }, "data");
+});
+if (userPasswordForm) userPasswordForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    document.querySelector(".btn--save-password").textContent = "Updating...";
+    const passwordCurrent = document.getElementById("password-current").value;
+    const password = document.getElementById("password").value;
+    const passwordConfirm = document.getElementById("password-confirm").value;
+    await (0, _updateSettings.updateSettings)({
+        passwordCurrent,
+        password,
+        passwordConfirm
+    }, "password");
+    document.querySelector(".btn--save-password").textContent = "Password Saved";
+    document.getElementById("password-current").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("password-confirm").value = "";
+});
 
-},{"./login":"qZEOz","./mapbox":"cr3Up"}],"qZEOz":[function(require,module,exports) {
+},{"./login":"qZEOz","./mapbox":"cr3Up","./updateSettings":"28JcJ"}],"qZEOz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -706,6 +734,27 @@ const displayMap = (locations)=>{
     map.addControl(new mapboxgl.NavigationControl());
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"5Birt"}]},["dcOb1","4uyBp"], "4uyBp", "parcelRequire11c7")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"5Birt"}],"28JcJ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "updateSettings", ()=>updateSettings);
+var _alerts = require("./alerts");
+const updateSettings = async (data, type)=>{
+    console.log("before");
+    try {
+        console.log("after");
+        const url = type === "password" ? "http://localhost:8000/api/v1/users/updateMyPassword" : "http://localhost:8000/api/v1/users/updateMe";
+        const res = await axios({
+            method: "PATCH",
+            url,
+            data
+        });
+        if (res.data.status === "success") (0, _alerts.showAlert)("success", `${type.toUpperCase()}  updated successfully`);
+    } catch (error) {
+        (0, _alerts.showAlert)("error", "error.response.data.message");
+    }
+};
+
+},{"./alerts":"j4hQk","@parcel/transformer-js/src/esmodule-helpers.js":"5Birt"}]},["dcOb1","4uyBp"], "4uyBp", "parcelRequire11c7")
 
 //# sourceMappingURL=index.js.map
