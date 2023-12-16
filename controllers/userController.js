@@ -1,5 +1,32 @@
+const multer = require('multer');
+
 const User = require('../models/userModel');
 const factory = require('./handlerFactory');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(`Sorry! Only image files are allowed`, false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -16,6 +43,8 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = async (req, res, next) => {
+  console.log(req.file);
+  console.log(req.body);
   if (req.body.password || req.passwordConfirm) {
     return res.status(401).json({
       error: "You can't update your password this way",

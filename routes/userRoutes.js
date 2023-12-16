@@ -1,5 +1,4 @@
 const express = require('express');
-
 const router = express.Router();
 
 const {
@@ -17,6 +16,7 @@ const {
   getMe,
   deleteMe,
   updateMe,
+  uploadUserPhoto,
   getAllUsers,
   getUser,
   updateUser,
@@ -33,7 +33,7 @@ router.post('/forgotPassword', forgotPassword);
 router.use(protect);
 
 router.get('/me', getMe, getUser);
-router.patch('/updateMe', updateMe);
+router.patch('/updateMe', uploadUserPhoto, updateMe);
 router.delete('/deleteMe', deleteMe);
 router.patch('/updateMyPassword', updatePassword);
 
