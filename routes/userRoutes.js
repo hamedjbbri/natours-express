@@ -13,6 +13,7 @@ const {
 } = require('../controllers/authController');
 
 const {
+  resizeUserphoto,
   getMe,
   deleteMe,
   updateMe,
@@ -33,7 +34,8 @@ router.post('/forgotPassword', forgotPassword);
 router.use(protect);
 
 router.get('/me', getMe, getUser);
-router.patch('/updateMe', uploadUserPhoto, updateMe);
+router.patch('/updateMe', uploadUserPhoto, resizeUserphoto, updateMe);
+
 router.delete('/deleteMe', deleteMe);
 router.patch('/updateMyPassword', updatePassword);
 

@@ -8,6 +8,8 @@ const reviewRouter = require('./../routes/reviewRoutes');
 // } = require('./../controllers/reviewController');
 
 const {
+  uploadTourImages,
+  resizeTourImages,
   getDistances,
   getToursWithin,
   getMonthlyPlan,
@@ -46,7 +48,13 @@ router
 router
   .route('/:id')
   .get(getTour)
-  .patch(protect, restrictTo('admin', 'lead-guide'), updateTour)
+  .patch(
+    protect,
+    uploadTourImages,
+    resizeTourImages,
+    restrictTo('admin', 'lead-guide'),
+    updateTour
+  )
   .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
 
 module.exports = router;

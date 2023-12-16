@@ -1,10 +1,7 @@
 import { showAlert } from './alerts';
 
 export const updateSettings = async (data, type) => {
-  console.log('before');
-
   try {
-    console.log('after');
     const url =
       type === 'password'
         ? 'http://localhost:8000/api/v1/users/updateMyPassword'
