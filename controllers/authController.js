@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -43,10 +43,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role,
   });
-  // const token = signToken(newUser._id);
-
-  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-  // res.cookie('jwt', token, cookieOptions);
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  console.log(url);
+  await new Email(newUser, url).sendWelcome();
 
   sendTokenCookie(newUser, res);
 });
@@ -194,10 +193,11 @@ exports.forgotPassword = async (req, res, next) => {
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}. \nIf you didn't make this request, please ignore this email!`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: 'Your password reset token (valid for 10 min)',
+    //   message,
+    // });
 
     res.status(200).json({
       status: 'success',
